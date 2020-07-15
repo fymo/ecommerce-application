@@ -44,7 +44,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/create")
-	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+	public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest) {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 
@@ -53,9 +53,10 @@ public class UserController {
 		cartRepository.save(cart);
 		user.setCart(cart);
 
-		if(createUserRequest.getPassword().length() < 7 ||
-				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			return ResponseEntity.badRequest().build();
+		if(createUserRequest.getPassword().length() < 7 ){
+			return ResponseEntity.badRequest().body("Password must be at least 7 characters.");
+		}else if (!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
+			return ResponseEntity.badRequest().body("Password field does not match confirm password field");
 		}
 
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
