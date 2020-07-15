@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.TestUtils;
 import com.example.demo.controllers.CartController;
 import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.Item;
@@ -13,22 +14,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static com.example.demo.TestUtils.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CartControllerTest {
@@ -129,57 +125,17 @@ public class CartControllerTest {
         ResponseEntity<Cart> removeResponse = cartController.removeFromcart(request);
         assertNotNull(removeResponse);
         assertEquals(404, removeResponse.getStatusCodeValue());
+        assertNull(removeResponse.getBody());
 
         ResponseEntity<Cart> addResponse = cartController.addTocart(request);
         assertNotNull(addResponse);
         assertEquals(404, addResponse.getStatusCodeValue());
+        assertNull(addResponse.getBody());
 
         verify(userRepository, times(2)).findByUsername("invalidUser");
 
     }
 
-    private User createUser() {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("fymo");
-        user.setPassword("password");
-        user.setCart(createCart(user));
 
-        return user;
-    }
-
-    private Cart createCart(User user) {
-        Cart cart = new Cart();
-        cart.setId(1L);
-        List<Item> items = getItems();
-        cart.setItems(getItems());
-        cart.setTotal(items.stream().map(item -> item.getPrice()).reduce(BigDecimal::add).get());
-        cart.setUser(user);
-
-        return cart;
-    }
-
-    private List<Item> getItems() {
-
-        List<Item> items = new ArrayList<>();
-
-        for (int i = 1; i <= 2; i++) {
-            items.add(getItem(i));
-        }
-
-        return items;
-    }
-
-    private Item getItem(long id){
-        Item item = new Item();
-        item.setId(id);
-
-        item.setPrice(BigDecimal.valueOf(id * 1.2));
-
-        item.setName("Item " + item.getId());
-
-        item.setDescription("Description ");
-        return item;
-    }
 
 }
