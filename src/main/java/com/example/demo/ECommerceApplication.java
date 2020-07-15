@@ -16,7 +16,6 @@ public class ECommerceApplication {
 		SpringApplication.run(ECommerceApplication.class, args);
 	}
 
-
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder(){
 		return new BCryptPasswordEncoder();
