@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.controllers.ItemController;
-import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.Item;
 import com.example.demo.model.persistence.repositories.ItemRepository;
 import org.junit.Before;
@@ -32,9 +31,9 @@ public class ItemControllerTest {
     @Before
     public void setup(){
 
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(getItem(1)));
-        when(itemRepository.findAll()).thenReturn(getItems());
-        when(itemRepository.findByName("item")).thenReturn(Arrays.asList(getItem(1), getItem(2)));
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(createItem(1)));
+        when(itemRepository.findAll()).thenReturn(createItems());
+        when(itemRepository.findByName("item")).thenReturn(Arrays.asList(createItem(1), createItem(2)));
 
     }
 
@@ -46,7 +45,7 @@ public class ItemControllerTest {
         assertEquals(200, response.getStatusCodeValue());
         List<Item> items = response.getBody();
 
-        assertEquals(getItems(), items);
+        assertEquals(createItems(), items);
 
         verify(itemRepository , times(1)).findAll();
     }
@@ -59,7 +58,7 @@ public class ItemControllerTest {
         assertEquals(200, response.getStatusCodeValue());
 
         Item item = response.getBody();
-        assertEquals(getItem(1L), item);
+        assertEquals(createItem(1L), item);
 
         verify(itemRepository, times(1)).findById(1L);
     }
@@ -81,9 +80,9 @@ public class ItemControllerTest {
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
-        List<Item> items = Arrays.asList(getItem(1), getItem(2));
+        List<Item> items = Arrays.asList(createItem(1), createItem(2));
 
-        assertEquals(getItems(), items);
+        assertEquals(createItems(), items);
 
         verify(itemRepository , times(1)).findByName("item");
     }

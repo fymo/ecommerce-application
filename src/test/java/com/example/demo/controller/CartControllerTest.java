@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.TestUtils;
 import com.example.demo.controllers.CartController;
 import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.Item;
-import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.ItemRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
@@ -45,7 +43,7 @@ public class CartControllerTest {
     public void setup(){
 
         when(userRepository.findByUsername("fymo")).thenReturn(createUser());
-        when(itemRepository.findById(any())).thenReturn(Optional.of(getItem(1)));
+        when(itemRepository.findById(any())).thenReturn(Optional.of(createItem(1)));
 
     }
 
@@ -68,14 +66,14 @@ public class CartControllerTest {
 
         assertNotNull(actualCart);
 
-        Item item = getItem(request.getItemId());
+        Item item = createItem(request.getItemId());
         BigDecimal itemPrice = item.getPrice();
 
         BigDecimal expectedTotal = itemPrice.multiply(BigDecimal.valueOf(request.getQuantity())).add(generatedCart.getTotal());
 
         assertEquals("fymo", actualCart.getUser().getUsername());
         assertEquals(generatedCart.getItems().size() + request.getQuantity(), actualCart.getItems().size());
-        assertEquals(getItem(1), actualCart.getItems().get(0));
+        assertEquals(createItem(1), actualCart.getItems().get(0));
         assertEquals(expectedTotal, actualCart.getTotal());
 
         verify(cartRepository, times(1)).save(actualCart);
@@ -100,14 +98,14 @@ public class CartControllerTest {
 
         assertNotNull(actualCart);
 
-        Item item = getItem(request.getItemId());
+        Item item = createItem(request.getItemId());
         BigDecimal itemPrice = item.getPrice();
 
         BigDecimal expectedTotal = generatedCart.getTotal().subtract(itemPrice.multiply(BigDecimal.valueOf(request.getQuantity())));
 
         assertEquals("fymo", actualCart.getUser().getUsername());
         assertEquals(generatedCart.getItems().size() - request.getQuantity(), actualCart.getItems().size());
-        assertEquals(getItem(2), actualCart.getItems().get(0));
+        assertEquals(createItem(2), actualCart.getItems().get(0));
         assertEquals(expectedTotal, actualCart.getTotal());
 
         verify(cartRepository, times(1)).save(actualCart);
