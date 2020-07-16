@@ -2,6 +2,8 @@ package com.example.demo.controllers;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,8 @@ public class UserController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	private Logger log = LoggerFactory.getLogger(UserController.class);
+
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
 		return ResponseEntity.of(userRepository.findById(id));
@@ -54,14 +58,19 @@ public class UserController {
 		user.setCart(cart);
 
 		if(createUserRequest.getPassword().length() < 7 ){
+			log.error("[CREATE USER] [Fail] for user : " + user.getUsername() +", REASON : invalid password" );
 			return ResponseEntity.badRequest().body("Password must be at least 7 characters.");
 		}else if (!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
+			log.error("[CREATE USER] [Fail] for user : " + user.getUsername() +", REASON : password mismatching" );
 			return ResponseEntity.badRequest().body("Password field does not match confirm password field");
 		}
 
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
 
 		userRepository.save(user);
+
+		log.info("[CREATE USER] [Success] for user : " + user.getUsername());
+
 		return ResponseEntity.ok(user);
 	}
 	
